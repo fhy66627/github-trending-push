@@ -63,17 +63,20 @@ async def fetch_github_trending(language: str = "", since: str = "daily") -> str
             if not results:
                 return "未找到热门项目"
 
-            output = f"GitHub Trending ({since}):\n\n"
+            time_map = {"daily": "今日", "weekly": "本周", "monthly": "本月"}
+            time_label = time_map.get(since, since)
+
+            output = f"📅 GitHub 热门项目 ({time_label}):\n\n"
             for i, repo in enumerate(results, 1):
                 output += f"{i}. {repo['name']}\n"
-                output += f"   描述: {repo['description']}\n"
-                output += f"   链接: {repo['url']}\n"
+                output += f"   📖 描述: {repo['description']}\n"
+                output += f"   🔗 链接: {repo['url']}\n"
                 if repo['language']:
-                    output += f"   语言: {repo['language']}\n"
+                    output += f"   🛠️ 语言: {repo['language']}\n"
                 if repo['stars']:
-                    output += f"   ⭐ {repo['stars']}\n"
+                    output += f"   ⭐ 星标: {repo['stars']}\n"
                 if repo['forks']:
-                    output += f"   🍴 {repo['forks']}\n"
+                    output += f"   🍴 分叉: {repo['forks']}\n"
                 output += "\n"
 
             return output
@@ -106,14 +109,14 @@ async def main():
         print(f"获取失败: {result}")
         return
 
-    date_str = datetime.now().strftime("%Y-%m-%d")
-    subject = f"每日 GitHub 热门项目 - {date_str}"
+    date_str = datetime.now().strftime("%Y年%m月%d日")
+    subject = f"📅 GitHub 热门项目推送 - {date_str}"
 
     email_content = f"""每日 GitHub Trending 推送
 
 {result}
 
-发送时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+发送时间: {datetime.now().strftime('%Y年%m月%d日 %H:%M:%S')}
 """
 
     send_email(subject, email_content)
